@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MadingBoard - Content Management</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600&amp;family=Manrope:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary": "#ffffff",
+                        "surface-bright": "#f9f9f9",
+                        "primary": "#000000",
+                        "secondary-container": "#dfdfe2",
+                        "background": "#f9f9f9",
+                        "surface-container-high": "#e8e8e8",
+                        "secondary-fixed": "#e2e2e5",
+                        "tertiary-container": "#1b1b1b",
+                        "on-surface": "#1b1b1b",
+                        "primary-container": "#1b1b1b",
+                        "error-container": "#ffdad6",
+                        "inverse-surface": "#303030",
+                        "secondary-fixed-dim": "#c6c6c9",
+                        "inverse-primary": "#c6c6c6",
+                        "primary-fixed-dim": "#c6c6c6",
+                        "inverse-on-surface": "#f1f1f1",
+                        "surface-container-low": "#f3f3f3",
+                        "on-surface-variant": "#4c4546",
+                        "surface-variant": "#e2e2e2",
+                        "secondary": "#5d5e61",
+                        "on-tertiary-fixed-variant": "#474747",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-secondary-container": "#616365",
+                        "outline": "#7e7576",
+                        "on-tertiary-container": "#848484",
+                        "tertiary-fixed": "#e2e2e2",
+                        "surface-container": "#eeeeee",
+                        "tertiary-fixed-dim": "#c6c6c6",
+                        "on-secondary-fixed": "#1a1c1e",
+                        "tertiary": "#000000",
+                        "primary-fixed": "#e2e2e2",
+                        "surface-dim": "#dadada",
+                        "on-primary-fixed-variant": "#474747",
+                        "on-error": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "surface-tint": "#5e5e5e",
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#f9f9f9",
+                        "on-background": "#1b1b1b",
+                        "outline-variant": "#cfc4c5",
+                        "on-primary-fixed": "#1b1b1b",
+                        "on-primary": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#848484",
+                        "on-secondary-fixed-variant": "#454749",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#1b1b1b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "card-padding": "24px",
+                        "unit": "8px",
+                        "gutter": "24px",
+                        "container-padding": "40px",
+                        "stack-gap": "16px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Manrope"],
+                        "body-lg": ["Manrope"],
+                        "display": ["Manrope"],
+                        "label-caps": ["JetBrains Mono"],
+                        "headline-md": ["Manrope"],
+                        "headline-lg": ["Manrope"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "label-caps": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.3", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+        
+        /* Neumorphic Extrusion (Raised) */
+        .neu-raised {
+            background-color: theme('colors.background');
+            box-shadow: 8px 8px 16px #AEAEC080, -8px -8px 16px #FFFFFF;
+        }
+
+        /* Neumorphic Inset (Sunken) */
+        .neu-inset {
+            background-color: theme('colors.background');
+            box-shadow: inset 8px 8px 16px #AEAEC080, inset -8px -8px 16px #FFFFFF;
+        }
+
+        /* Interactive Element Base */
+        .neu-interactive {
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .neu-interactive:hover {
+            transform: scale(1.02);
+        }
+
+        .neu-interactive:active {
+            transform: scale(0.98);
+            box-shadow: inset 8px 8px 16px #AEAEC080, inset -8px -8px 16px #FFFFFF;
+        }
+
+        /* Material Icons setup */
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.filled {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-body-md text-body-md pt-[100px]">
+<!-- TopNavBar (Shared Component JSON) -->
+<nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-container-padding py-stack-gap max-w-[1440px] mx-auto bg-background shadow-[8px_8px_16px_#AEAEC080,-8px_-8px_16px_#FFFFFF]">
+<div class="flex items-center gap-gutter">
+<span class="text-headline-lg font-headline-lg font-black text-primary">MadingBoard</span>
+<div class="hidden md:flex gap-gutter items-center ml-container-padding">
+<a class="text-secondary font-medium hover:text-primary hover:scale-105 transition-transform" href="#">Home</a>
+<a class="text-secondary font-medium hover:text-primary hover:scale-105 transition-transform" href="#">Dashboard</a>
+<a class="text-primary font-bold border-b-2 border-primary hover:text-primary hover:scale-105 transition-transform" href="#">Management</a>
+</div>
+</div>
+<div class="flex items-center gap-stack-gap">
+<!-- Search Bar (on_right) -->
+<div class="hidden md:flex relative neu-inset rounded-full px-4 py-2 items-center w-64">
+<span class="material-symbols-outlined text-secondary mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:outline-none focus:ring-0 text-primary w-full placeholder:text-secondary-fixed-dim" placeholder="Search..." type="text"/>
+</div>
+<button class="neu-raised neu-interactive rounded-full px-6 py-2 text-primary font-bold text-label-caps font-label-caps">Login</button>
+<img alt="User profile" class="w-10 h-10 rounded-full neu-raised object-cover" data-alt="A small, circular profile picture of an administrative user in a clean, modern style, suitable for a professional dashboard avatar." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBScE3SXIIX0ILp8qf6G0YEiizqpFzaYtQUDDuEl1xnkeZDRKF4B_mONcPbder81w4skgggi9OdgM3KPsgByyLoJbcsZc9NTD2eFx_Goi3PnGnLLSN8KUQHj0nLiNnQjIIEK8jXVkQESjhZPW1AIU5S7SH1t2N4qt2edQjjs7fEBvKBxLlu797rZX1aJg5aGDV8HKCrvnRnz9qGgCie2vlkYKIqFnZD2H92UTP9crH5wU48do0310WyFg"/>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-[1440px] mx-auto px-container-padding py-container-padding flex flex-col gap-stack-gap">
+<!-- Header & Primary Action -->
+<header class="flex justify-between items-end mb-gutter">
+<div>
+<h1 class="text-display font-display text-primary">Content Management</h1>
+<p class="text-secondary mt-unit text-body-lg font-body-lg">Manage, edit, and organize all bulletin posts.</p>
+</div>
+<button class="neu-raised neu-interactive rounded-lg px-8 py-4 flex items-center gap-2 bg-[#e0f2fe] text-primary transition-all active:bg-[#bae6fd]">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+<span class="text-label-caps font-label-caps font-bold">Add New Post</span>
+</button>
+</header>
+<!-- Content List View (Neumorphic Table Equivalent) -->
+<div class="flex flex-col gap-stack-gap">
+<!-- List Header (Hidden on small screens) -->
+<div class="hidden md:grid grid-cols-12 gap-gutter px-card-padding py-unit text-label-caps font-label-caps text-secondary-fixed-dim border-b-2 border-surface-container-high">
+<div class="col-span-5">Title &amp; Category</div>
+<div class="col-span-2">Author</div>
+<div class="col-span-2">Date</div>
+<div class="col-span-3 text-right">Actions</div>
+</div>
+<!-- List Item 1 -->
+<div class="neu-raised rounded-xl p-card-padding grid grid-cols-1 md:grid-cols-12 gap-gutter items-center relative overflow-hidden group">
+<!-- Accent category strip (Soft Blue equivalent implied by category) -->
+<div class="absolute top-0 left-0 w-full h-1 bg-[#bae6fd] opacity-70"></div>
+<div class="md:col-span-5 flex flex-col gap-1">
+<h2 class="text-headline-md font-headline-md text-primary">Annual Company Retreat Updates</h2>
+<div class="flex items-center gap-2">
+<span class="neu-inset rounded-full px-3 py-1 text-[10px] font-label-caps uppercase tracking-wider text-secondary">Events</span>
+<span class="neu-inset rounded-full px-3 py-1 text-[10px] font-label-caps uppercase tracking-wider text-secondary flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-[#fca5a5]"></span> Pinned
+                        </span>
+</div>
+</div>
+<div class="md:col-span-2 flex items-center gap-2 text-secondary">
+<span class="material-symbols-outlined text-[20px]" data-icon="person">person</span>
+                    Sarah Jenkins
+                </div>
+<div class="md:col-span-2 text-secondary text-sm">
+                    Oct 24, 2024
+                </div>
+<div class="md:col-span-3 flex items-center justify-end gap-3 mt-4 md:mt-0">
+<button aria-label="View" class="neu-raised neu-interactive rounded-full w-10 h-10 flex items-center justify-center text-secondary hover:text-primary">
+<span class="material-symbols-outlined text-[20px]" data-icon="visibility">visibility</span>
+</button>
+<button aria-label="Edit" class="neu-raised neu-interactive rounded-full w-10 h-10 flex items-center justify-center text-secondary hover:text-primary">
+<span class="material-symbols-outlined text-[20px]" data-icon="edit">edit</span>
+</button>
+<button aria-label="Delete" class="neu-raised neu-interactive rounded-full w-10 h-10 flex items-center justify-center text-error hover:text-error-container bg-background">
+<span class="material-symbols-outlined text-[20px]" data-icon="delete">delete</span>
+</button>
+</div>
+</div>
+<!-- List Item 2 -->
+<div class="neu-raised rounded-xl p-card-padding grid grid-cols-1 md:grid-cols-12 gap-gutter items-center relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-1 bg-[#bbf7d0] opacity-70"></div>
+<div class="md:col-span-5 flex flex-col gap-1">
+<h2 class="text-headline-md font-headline-md text-primary">Q3 Financial Results Breakdown</h2>
+<div class="flex items-center gap-2">
+<span class="neu-inset rounded-full px-3 py-1 text-[10px] font-label-caps uppercase tracking-wider text-secondary">Finance</span>
+</div>
+</div>
+<div class="md:col-span-2 flex items-center gap-2 text-secondary">
+<span class="material-symbols-outlined text-[20px]" data-icon="person">person</span>
+                    David Chen
+                </div>
+<div class="md:col-span-2 text-secondary text-sm">
+                    Oct 22, 2024
+                </div>
+<div class="md:col-span-3 flex items-center justify-end gap-3 mt-4 md:mt-0">
+<button aria-label="View" class="neu-raised neu-interactive rounded-full w-10 h-10 flex items-center justify-center text-secondary hover:text-primary">
+<span class="material-symbols-outlined text-[20px]" data-icon="visibility">visibility</span>
+</button>
+<button aria-label="Edit" class="neu-raised neu-interactive rounded-full w-10 h-10 flex items-center justify-center text-secondary hover:text-primary">
+<span class="material-symbols-outlined text-[20px]" data-icon="edit">edit</span>
+</button>
+<button aria-label="Delete" class="neu-raised neu-interactive rounded-full w-10 h-10 flex items-center justify-center text-error hover:text-error-container bg-background">
+<span class="material-symbols-outlined text-[20px]" data-icon="delete">delete</span>
+</button>
+</div>
+</div>
+<!-- List Item 3 -->
+<div class="neu-raised rounded-xl p-card-padding grid grid-cols-1 md:grid-cols-12 gap-gutter items-center relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-1 bg-[#fef08a] opacity-70"></div>
+<div class="md:col-span-5 flex flex-col gap-1">
+<h2 class="text-headline-md font-headline-md text-primary">New Office Policy Guidelines</h2>
+<div class="flex items-center gap-2">
+<span class="neu-inset rounded-full px-3 py-1 text-[10px] font-label-caps uppercase tracking-wider text-secondary">HR</span>
+</div>
+</div>
+<div class="md:col-span-2 flex items-center gap-2 text-secondary">
+<span class="material-symbols-outlined text-[20px]" data-icon="person">person</span>
+                    Admin Team
+                </div>
+<div class="md:col-span-2 text-secondary text-sm">
+                    Oct 15, 2024
+                </div>
+<div class="md:col-span-3 flex items-center justify-end gap-3 mt-4 md:mt-0">
+<button aria-label="View" class="neu-raised neu-interactive rounded-full w-10 h-10 flex items-center justify-center text-secondary hover:text-primary">
+<span class="material-symbols-outlined text-[20px]" data-icon="visibility">visibility</span>
+</button>
+<button aria-label="Edit" class="neu-raised neu-interactive rounded-full w-10 h-10 flex items-center justify-center text-secondary hover:text-primary">
+<span class="material-symbols-outlined text-[20px]" data-icon="edit">edit</span>
+</button>
+<button aria-label="Delete" class="neu-raised neu-interactive rounded-full w-10 h-10 flex items-center justify-center text-error hover:text-error-container bg-background">
+<span class="material-symbols-outlined text-[20px]" data-icon="delete">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Pagination (Simple Neumorphic) -->
+<div class="flex justify-center items-center gap-4 mt-8">
+<button aria-label="Previous Page" class="neu-raised neu-interactive rounded-full w-10 h-10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+</button>
+<span class="neu-inset rounded-lg px-4 py-2 font-label-caps text-label-caps text-primary">Page 1 of 5</span>
+<button aria-label="Next Page" class="neu-raised neu-interactive rounded-full w-10 h-10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</main>
+<!-- Footer (Shared Component JSON) -->
+<footer class="w-full py-container-padding px-gutter flex flex-col md:flex-row justify-between items-center gap-stack-gap bg-background shadow-[inset_8px_8px_16px_#AEAEC080,inset_-8px_-8px_16px_#FFFFFF] mt-auto">
+<div class="text-label-caps font-label-caps text-primary">
+            © 2024 Digital Mading Bulletin. All rights reserved.
+        </div>
+<div class="flex gap-gutter">
+<a class="text-secondary hover:text-primary transition-colors text-body-md font-body-md" href="#">About</a>
+<a class="text-secondary hover:text-primary transition-colors text-body-md font-body-md" href="#">Privacy Policy</a>
+<a class="text-secondary hover:text-primary transition-colors text-body-md font-body-md" href="#">Contact Support</a>
+</div>
+</footer>
+</body></html>

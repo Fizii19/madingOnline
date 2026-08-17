@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Digital Mading - Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary": "#ffffff",
+                        "surface-bright": "#f9f9f9",
+                        "primary": "#000000",
+                        "secondary-container": "#dfdfe2",
+                        "background": "#f9f9f9",
+                        "surface-container-high": "#e8e8e8",
+                        "secondary-fixed": "#e2e2e5",
+                        "tertiary-container": "#1b1b1b",
+                        "on-surface": "#1b1b1b",
+                        "primary-container": "#1b1b1b",
+                        "error-container": "#ffdad6",
+                        "inverse-surface": "#303030",
+                        "secondary-fixed-dim": "#c6c6c9",
+                        "inverse-primary": "#c6c6c6",
+                        "primary-fixed-dim": "#c6c6c6",
+                        "inverse-on-surface": "#f1f1f1",
+                        "surface-container-low": "#f3f3f3",
+                        "on-surface-variant": "#4c4546",
+                        "surface-variant": "#e2e2e2",
+                        "secondary": "#5d5e61",
+                        "on-tertiary-fixed-variant": "#474747",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-secondary-container": "#616365",
+                        "outline": "#7e7576",
+                        "on-tertiary-container": "#848484",
+                        "tertiary-fixed": "#e2e2e2",
+                        "surface-container": "#eeeeee",
+                        "tertiary-fixed-dim": "#c6c6c6",
+                        "on-secondary-fixed": "#1a1c1e",
+                        "tertiary": "#000000",
+                        "primary-fixed": "#e2e2e2",
+                        "surface-dim": "#dadada",
+                        "on-primary-fixed-variant": "#474747",
+                        "on-error": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "surface-tint": "#5e5e5e",
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#f9f9f9",
+                        "on-background": "#1b1b1b",
+                        "outline-variant": "#cfc4c5",
+                        "on-primary-fixed": "#1b1b1b",
+                        "on-primary": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#848484",
+                        "on-secondary-fixed-variant": "#454749",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#1b1b1b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "card-padding": "24px",
+                        "unit": "8px",
+                        "gutter": "24px",
+                        "container-padding": "40px",
+                        "stack-gap": "16px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Manrope"],
+                        "body-lg": ["Manrope"],
+                        "display": ["Manrope"],
+                        "label-caps": ["JetBrains Mono"],
+                        "headline-md": ["Manrope"],
+                        "headline-lg": ["Manrope"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "label-caps": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.3", "fontWeight": "700" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #f9f9f9;
+        }
+        .neumorphic-raised {
+            box-shadow: 8px 8px 16px #AEAEC080, -8px -8px 16px #FFFFFF;
+        }
+        .neumorphic-inset {
+            box-shadow: inset 8px 8px 16px #AEAEC080, inset -8px -8px 16px #FFFFFF;
+        }
+        .neumorphic-btn:active {
+            box-shadow: inset 8px 8px 16px #AEAEC080, inset -8px -8px 16px #FFFFFF;
+            transform: translateY(2px);
+        }
+        
+        /* WebGL Shader Background Canvas */
+        #shader-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            opacity: 0.15; /* Keep it subtle */
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col">
+<!-- Subtle WebGL Background for depth -->
+<canvas id="shader-bg"></canvas>
+<!-- TopNavBar -->
+<nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-container-padding py-stack-gap max-w-[1440px] mx-auto bg-background shadow-[8px_8px_16px_#AEAEC080,-8px_-8px_16px_#FFFFFF]">
+<div class="flex items-center gap-stack-gap">
+<span class="text-headline-lg font-headline-lg font-black text-primary">MadingBoard</span>
+</div>
+<div class="hidden md:flex gap-gutter items-center">
+<a class="text-primary font-bold border-b-2 border-primary pb-1 text-headline-md font-headline-md" href="#">Home</a>
+<a class="text-secondary font-medium hover:text-primary hover:scale-105 transition-transform text-headline-md font-headline-md" href="#">Dashboard</a>
+<a class="text-secondary font-medium hover:text-primary hover:scale-105 transition-transform text-headline-md font-headline-md" href="#">Management</a>
+</div>
+<div class="flex items-center gap-stack-gap">
+<div class="neumorphic-inset rounded-full p-2 flex items-center bg-background">
+<span class="material-symbols-outlined text-secondary">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-md font-body-md text-primary ml-2 outline-none w-32 md:w-48 placeholder-outline" placeholder="Search bulletins..." type="text"/>
+</div>
+<button class="neumorphic-raised rounded-full px-6 py-2 text-primary font-bold hover:scale-105 transition-transform text-body-md font-body-md">Login</button>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-grow pt-[120px] pb-container-padding px-container-padding max-w-[1440px] mx-auto w-full">
+<!-- Header Section -->
+<header class="mb-container-padding text-center md:text-left">
+<h1 class="text-display font-display text-primary mb-unit">Latest Bulletins</h1>
+<p class="text-body-lg font-body-lg text-secondary max-w-2xl">Discover the most recent announcements, events, and updates from the community board.</p>
+</header>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Featured Card (Spans 8 columns) -->
+<article class="md:col-span-8 bg-surface rounded-xl neumorphic-raised overflow-hidden flex flex-col group relative">
+<div class="h-2 w-full bg-[#a3defe] absolute top-0 left-0"></div> <!-- Soft Blue Accent -->
+<div class="absolute top-4 right-4 w-4 h-4 rounded-full bg-[#ffb7b2] shadow-sm z-10"></div> <!-- Push pin -->
+<div class="h-64 w-full relative">
+<img class="w-full h-full object-cover" data-alt="A high-quality, wide-angle photograph of a bustling modern university campus courtyard during a bright, sunny afternoon. Students are actively engaging in various outdoor club activities. The scene is illuminated by natural, high-key sunlight, creating crisp shadows. The overall aesthetic is vibrant, organized, and energetic, fitting a clean light-mode UI design style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0a-A4E0XfIO4TZ03KMLZey_uZXP5gQNFibOqFBVmWw2iWahJbbEPOpvU-FQWSgw5N_TEep1Kw0Lnjl284Ecv8YE1wvZaxvfORfocE6EbRoxhDKLcWgGcvtTbyIBAO0D9qfaMoJdod489BDtKvsumwJwEPdvTDsiQVNVcaPwjYlPerNVDigWkdGwyoc6CkeZBCD7c34LDQ27RKkSV0uYtuAgFH_q9U-vYJAKALEx2okYdrQq0g1OJiZQ"/>
+</div>
+<div class="p-card-padding flex-grow flex flex-col">
+<div class="flex gap-2 mb-3">
+<span class="bg-surface-variant text-primary text-label-caps font-label-caps px-3 py-1 rounded-full neumorphic-inset">EVENT</span>
+<span class="bg-surface-variant text-primary text-label-caps font-label-caps px-3 py-1 rounded-full neumorphic-inset">CAMPUS</span>
+</div>
+<h2 class="text-headline-lg font-headline-lg text-primary mb-2">Annual Spring Festival Announced</h2>
+<p class="text-body-md font-body-md text-on-surface-variant mb-6 flex-grow">Get ready for the biggest event of the year! The Annual Spring Festival brings together all student organizations for three days of activities, performances, and food stalls. Early bird registration for booths opens next week.</p>
+<div class="flex justify-between items-center mt-auto">
+<span class="text-secondary text-label-caps font-label-caps flex items-center gap-1"><span class="material-symbols-outlined" style="font-size: 16px;">calendar_today</span> Oct 24, 2024</span>
+<button class="neumorphic-btn bg-surface text-primary font-bold px-6 py-2 rounded-lg text-body-md font-body-md border border-surface-container-high transition-all">Read More</button>
+</div>
+</div>
+</article>
+<!-- Standard Card (Spans 4 columns) -->
+<article class="md:col-span-4 bg-surface rounded-xl neumorphic-raised overflow-hidden flex flex-col relative">
+<div class="h-2 w-full bg-[#b5ead7] absolute top-0 left-0"></div> <!-- Soft Green Accent -->
+<div class="h-48 w-full relative">
+<img class="w-full h-full object-cover" data-alt="A clean, minimalist flat-lay photograph of modern study materials on a pristine white desk. A sleek laptop, a neatly bound notebook, and a ceramic cup of coffee are arranged precisely. The lighting is soft, diffused, and high-key, emphasizing a serene, organized study environment perfectly suited for a bright, modern UI interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmw5ZYaXDre7RX2i1alqd_M2xlCYUZUFUDi_dMrC8mcT9FHzz6PQu7-0sqO0Rmqd_W5XoOD17jPrjTJxFC7yCklY5iIV_rbyhEKLXI7eN0pwmsx6eZli55sTVsRvGGaHZ_xjbwFO5N6IfqEPUWtA2m1U1RlGjLHJvqdLjJB9uNX83OQjuhFzPoDLRrh4tOAd2xnAE1fMQn2Ow318d1LyqlD9vwV75j5_qz92H4ebOTlJq8LrFCqUsrsA"/>
+</div>
+<div class="p-card-padding flex-grow flex flex-col">
+<div class="flex gap-2 mb-3">
+<span class="bg-surface-variant text-primary text-label-caps font-label-caps px-3 py-1 rounded-full neumorphic-inset">ACADEMIC</span>
+</div>
+<h2 class="text-headline-md font-headline-md text-primary mb-2">Midterm Schedule Released</h2>
+<p class="text-body-md font-body-md text-on-surface-variant mb-6 flex-grow">The finalized schedule for the Fall semester midterms is now available. Please check your department's specific guidelines.</p>
+<div class="flex justify-between items-center mt-auto">
+<span class="text-secondary text-label-caps font-label-caps flex items-center gap-1"><span class="material-symbols-outlined" style="font-size: 16px;">schedule</span> 2 hrs ago</span>
+<button aria-label="Read more" class="neumorphic-btn bg-surface text-primary font-bold p-2 rounded-full flex items-center justify-center transition-all">
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Text Only Card (Spans 4 columns) -->
+<article class="md:col-span-4 bg-surface rounded-xl neumorphic-raised p-card-padding flex flex-col relative">
+<div class="h-2 w-full bg-[#ffdac1] absolute top-0 left-0"></div> <!-- Soft Orange Accent -->
+<div class="flex gap-2 mb-4">
+<span class="bg-surface-variant text-primary text-label-caps font-label-caps px-3 py-1 rounded-full neumorphic-inset">ALERT</span>
+</div>
+<h2 class="text-headline-md font-headline-md text-primary mb-3">Library Renovation Notice</h2>
+<p class="text-body-md font-body-md text-on-surface-variant mb-6 flex-grow">The East Wing of the central library will be closed for structural renovations starting next Monday. Study spaces have been temporarily relocated to the student center.</p>
+<div class="flex justify-between items-center mt-auto">
+<span class="text-secondary text-label-caps font-label-caps">By Admin</span>
+<button class="text-primary font-bold text-body-md font-body-md hover:underline decoration-2 underline-offset-4">Details</button>
+</div>
+</article>
+<!-- Standard Card (Spans 4 columns) -->
+<article class="md:col-span-4 bg-surface rounded-xl neumorphic-raised overflow-hidden flex flex-col relative">
+<div class="h-2 w-full bg-[#e2f0cb] absolute top-0 left-0"></div> <!-- Soft Yellow-Green Accent -->
+<div class="h-48 w-full relative">
+<div class="w-full h-full bg-cover bg-center" data-alt="A stylized, close-up shot of a modern, minimalist robotics lab workspace. Metallic components and a sleek robotic arm are illuminated by bright, clean, high-key studio lighting against a stark white background. The composition is highly structured and organized, conveying a sense of advanced technology within a clean, light-mode design system." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC9yqQhaPs0sSbLItcQVTFotDDFBGsEJLuIwt3OBfHEjUdFSC5i2hPr2VsIMeoN5lQJusSMtlNHvpRQR529ifbuloreovHVCf4kEczPfzorRwb_FvrAsQElX3iya1QFToh-g08cEg4voBkzncRDpTHktQrq9Edn0lYhQIppPsZWReLVH0ahb2AjhVCDiHEJ_meU5tkSukW5zZywozp65-llYxpljcAx2eRnQNMjyAhX1B8xWcMTzWBaTA')"></div>
+</div>
+<div class="p-card-padding flex-grow flex flex-col">
+<div class="flex gap-2 mb-3">
+<span class="bg-surface-variant text-primary text-label-caps font-label-caps px-3 py-1 rounded-full neumorphic-inset">CLUB</span>
+</div>
+<h2 class="text-headline-md font-headline-md text-primary mb-2">Robotics Team Wins Regionals</h2>
+<p class="text-body-md font-body-md text-on-surface-variant mb-6 flex-grow">Congratulations to our university robotics team for securing first place at the state regional competition this weekend.</p>
+<div class="flex justify-between items-center mt-auto">
+<span class="text-secondary text-label-caps font-label-caps">Yesterday</span>
+<button aria-label="Read more" class="neumorphic-btn bg-surface text-primary font-bold p-2 rounded-full flex items-center justify-center transition-all">
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Quick Poll / Interactive Card (Spans 4 columns) -->
+<article class="md:col-span-4 bg-surface rounded-xl neumorphic-raised p-card-padding flex flex-col relative justify-center">
+<div class="h-2 w-full bg-[#c7ceea] absolute top-0 left-0"></div> <!-- Soft Purple Accent -->
+<h2 class="text-headline-md font-headline-md text-primary mb-4 text-center">Quick Poll</h2>
+<p class="text-body-md font-body-md text-on-surface-variant mb-6 text-center">What new food option do you want in the cafeteria next semester?</p>
+<div class="space-y-3">
+<label class="flex items-center gap-3 p-3 rounded-lg neumorphic-raised cursor-pointer hover:bg-surface-container-low transition-colors">
+<input class="w-5 h-5 text-primary border-outline focus:ring-primary bg-transparent neumorphic-inset form-radio" name="poll" type="radio"/>
+<span class="text-body-md font-body-md text-primary">Sushi Bar</span>
+</label>
+<label class="flex items-center gap-3 p-3 rounded-lg neumorphic-raised cursor-pointer hover:bg-surface-container-low transition-colors">
+<input class="w-5 h-5 text-primary border-outline focus:ring-primary bg-transparent neumorphic-inset form-radio" name="poll" type="radio"/>
+<span class="text-body-md font-body-md text-primary">Taco Stand</span>
+</label>
+<label class="flex items-center gap-3 p-3 rounded-lg neumorphic-raised cursor-pointer hover:bg-surface-container-low transition-colors">
+<input class="w-5 h-5 text-primary border-outline focus:ring-primary bg-transparent neumorphic-inset form-radio" name="poll" type="radio"/>
+<span class="text-body-md font-body-md text-primary">Vegan Deli</span>
+</label>
+</div>
+<button class="mt-6 neumorphic-btn bg-surface text-primary font-bold px-4 py-2 rounded-lg text-body-md font-body-md w-full transition-all">Submit Vote</button>
+</article>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-container-padding px-gutter flex flex-col md:flex-row justify-between items-center gap-stack-gap bg-background shadow-[inset_8px_8px_16px_#AEAEC080,inset_-8px_-8px_16px_#FFFFFF] mt-auto">
+<div class="text-label-caps font-label-caps text-primary">
+            MadingBoard
+        </div>
+<div class="flex gap-gutter text-secondary text-label-caps font-label-caps">
+<a class="hover:text-primary transition-colors" href="#">About</a>
+<a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-primary transition-colors" href="#">Contact Support</a>
+</div>
+<div class="text-secondary text-body-md font-body-md text-sm">
+            © 2024 Digital Mading Bulletin. All rights reserved.
+        </div>
+</footer>
+<!-- WebGL Shader Script for subtle background movement -->
+<script>
+        const canvas = document.getElementById('shader-bg');
+        const gl = canvas.getContext('webgl');
+
+        if (gl) {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const vsSource = `
+                attribute vec4 aVertexPosition;
+                void main() {
+                    gl_Position = aVertexPosition;
+                }
+            `;
+
+            const fsSource = `
+                precision mediump float;
+                uniform vec2 u_resolution;
+                uniform float u_time;
+
+                void main() {
+                    vec2 st = gl_FragCoord.xy / u_resolution.xy;
+                    
+                    // Super subtle, slow moving noise/gradient
+                    float color = 0.0;
+                    color += sin(st.x * 5.0 + u_time * 0.2) * 0.5 + 0.5;
+                    color += cos(st.y * 3.0 + u_time * 0.1) * 0.5 + 0.5;
+                    color = color * 0.5; // Average
+                    
+                    // Very light grey tones suitable for the light mode neumorphic background
+                    vec3 finalColor = mix(vec3(0.96, 0.96, 0.96), vec3(0.98, 0.98, 0.98), color);
+                    
+                    gl_FragColor = vec4(finalColor, 1.0);
+                }
+            `;
+
+            function createShader(gl, type, source) {
+                const shader = gl.createShader(type);
+                gl.shaderSource(shader, source);
+                gl.compileShader(shader);
+                if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                    console.error('An error occurred compiling the shaders: ' + gl.getShaderInfoLog(shader));
+                    gl.deleteShader(shader);
+                    return null;
+                }
+                return shader;
+            }
+
+            const vertexShader = createShader(gl, gl.VERTEX_SHADER, vsSource);
+            const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
+
+            const shaderProgram = gl.createProgram();
+            gl.attachShader(shaderProgram, vertexShader);
+            gl.attachShader(shaderProgram, fragmentShader);
+            gl.linkProgram(shaderProgram);
+
+            const programInfo = {
+                program: shaderProgram,
+                attribLocations: {
+                    vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
+                },
+                uniformLocations: {
+                    resolution: gl.getUniformLocation(shaderProgram, 'u_resolution'),
+                    time: gl.getUniformLocation(shaderProgram, 'u_time'),
+                },
+            };
+
+            const positions = [
+                -1.0,  1.0,
+                 1.0,  1.0,
+                -1.0, -1.0,
+                 1.0, -1.0,
+            ];
+
+            const positionBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+            function render(now) {
+                now *= 0.001; // convert to seconds
+
+                if (canvas.width !== window.innerWidth || canvas.height !== window.innerHeight) {
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                    gl.viewport(0, 0, canvas.width, canvas.height);
+                }
+
+                gl.clearColor(0.0, 0.0, 0.0, 1.0);
+                gl.clear(gl.COLOR_BUFFER_BIT);
+
+                gl.useProgram(programInfo.program);
+
+                gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+                gl.vertexAttribPointer(programInfo.attribLocations.vertexPosition, 2, gl.FLOAT, false, 0, 0);
+                gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
+
+                gl.uniform2f(programInfo.uniformLocations.resolution, canvas.width, canvas.height);
+                gl.uniform1f(programInfo.uniformLocations.time, now);
+
+                gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+                requestAnimationFrame(render);
+            }
+            requestAnimationFrame(render);
+        }
+    </script>
+</body></html>
