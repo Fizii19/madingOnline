@@ -1,5 +1,5 @@
 <x-layout title="MadingBoard - Manajemen Konten">
-    <x-navbar :active="'management'" :show-search="true" />
+    <x-navbar :active="'management'" :show-search="false" />
 
     <main class="flex-grow w-full max-w-[1440px] mx-auto px-container-padding pt-[100px] pb-container-padding flex flex-col gap-stack-gap">
         <header class="flex justify-between items-end mb-gutter">
@@ -75,9 +75,12 @@
                             :author="$post->author->name"
                             :date="$post->created_at->translatedFormat('d M Y')"
                             :accent="$post->accent"
+                            :status="$post->status"
                             :view-url="route('posts.show', $post)"
                             :edit-url="route('posts.edit', $post)"
-                            :delete-url="route('posts.destroy', $post)" />
+                            :delete-url="$post->status !== 'pending' ? route('posts.destroy', $post) : null"
+                            :approve-url="$post->status === 'pending' ? route('posts.approve', $post) : null"
+                            :reject-url="$post->status === 'pending' ? route('posts.reject', $post) : null" />
             @empty
                 <div class="shadow-neu-raised bg-background rounded-xl p-card-padding text-center text-secondary">
                     Belum ada postingan. Klik "Add New Post" untuk membuat yang pertama.

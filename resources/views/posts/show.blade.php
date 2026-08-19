@@ -53,6 +53,16 @@
                                 {{ $likesCount }} Suka
                             </button>
                         </form>
+
+                        @auth
+                            @if (auth()->id() !== $post->user_id)
+                                <button type="button" onclick="document.getElementById('post-report-form').classList.toggle('hidden')"
+                                        class="flex items-center gap-1 text-secondary hover:text-accent-orange transition-colors neu-btn">
+                                    <x-icon name="flag" class="text-[18px]" />
+                                    Laporkan
+                                </button>
+                            @endif
+                        @endauth
                     </div>
 
                     <div class="text-body-lg font-sans text-on-surface leading-relaxed whitespace-pre-line">
@@ -60,6 +70,35 @@
                     </div>
                 </div>
             </article>
+
+            {{-- Post report form --}}
+            @auth
+                @if (auth()->id() !== $post->user_id)
+                    <div id="post-report-form" class="hidden mt-gutter shadow-neu-raised bg-background rounded-xl p-card-padding">
+                        <form method="POST" action="{{ route('posts.report', $post) }}">
+                            @csrf
+                            <h3 class="text-headline-md font-sans text-primary mb-3">Laporkan Postingan</h3>
+                            <label class="block text-label-caps font-label-caps text-on-surface-variant mb-2">Alasan Laporan</label>
+                            <div class="flex flex-wrap gap-3 mb-3">
+                                @foreach (\App\Models\PostReport::REASON_LABELS as $key => $label)
+                                    <label class="flex items-center gap-1 text-sm text-primary cursor-pointer">
+                                        <input type="radio" name="reason" value="{{ $key }}" required class="accent-primary">
+                                        {{ $label }}
+                                    </label>
+                                @endforeach
+                            </div>
+                            <textarea name="description" rows="3" placeholder="Deskripsi tambahan (opsional)..."
+                                      class="w-full shadow-neu-inset bg-background rounded-lg px-4 py-3 text-body-md font-sans text-primary placeholder:text-outline focus:shadow-neu-focus focus:outline-none transition-all resize-none mb-3"></textarea>
+                            <div class="flex justify-end gap-2">
+                                <button type="button" onclick="document.getElementById('post-report-form').classList.add('hidden')"
+                                        class="px-4 py-2 text-sm text-secondary hover:text-primary transition-colors">Batal</button>
+                                <button type="submit"
+                                        class="px-4 py-2 text-sm bg-accent-orange text-white rounded-lg neu-btn font-bold">Kirim Laporan</button>
+                            </div>
+                        </form>
+                    </div>
+                @endif
+            @endauth
 
             {{-- Comments --}}
             <div class="mt-gutter shadow-neu-raised bg-background rounded-xl p-card-padding">
@@ -101,19 +140,57 @@
                                         <span class="text-xs text-secondary">{{ $comment->created_at->diffForHumans() }}</span>
                                     </div>
 
-                                    @can('delete', $comment)
-                                        <form method="POST" action="{{ route('posts.comments.destroy', [$post, $comment]) }}"
-                                              onsubmit="return confirm('Hapus komentar ini? Tindakan tidak bisa dibatalkan.');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" aria-label="Hapus komentar"
-                                                    class="text-secondary hover:text-error transition-colors">
-                                                <x-icon name="delete" class="text-[18px]" />
-                                            </button>
-                                        </form>
-                                    @endcan
+                                    <div class="flex items-center gap-2">
+                                        @can('delete', $comment)
+                                            <form method="POST" action="{{ route('posts.comments.destroy', [$post, $comment]) }}"
+                                                  onsubmit="return confirm('Hapus komentar ini? Tindakan tidak bisa dibatalkan.');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" aria-label="Hapus komentar"
+                                                        class="text-secondary hover:text-error transition-colors">
+                                                    <x-icon name="delete" class="text-[18px]" />
+                                                </button>
+                                            </form>
+                                        @endcan
+
+                                        @auth
+                                            @if (auth()->id() !== $comment->user_id)
+                                                <button type="button" onclick="document.getElementById('report-form-{{ $comment->id }}').classList.toggle('hidden')"
+                                                        class="text-secondary hover:text-accent-orange transition-colors" aria-label="Laporkan komentar">
+                                                    <x-icon name="flag" class="text-[18px]" />
+                                                </button>
+                                            @endif
+                                        @endauth
+                                    </div>
                                 </div>
                                 <p class="text-body-md font-sans text-on-surface mt-1 whitespace-pre-line">{{ $comment->body }}</p>
+
+                                @auth
+                                    @if (auth()->id() !== $comment->user_id)
+                                        <div id="report-form-{{ $comment->id }}" class="hidden mt-2">
+                                            <form method="POST" action="{{ route('posts.comments.report', [$post, $comment]) }}" class="shadow-neu-inset bg-background rounded-lg p-3">
+                                                @csrf
+                                                <label class="block text-label-caps font-label-caps text-on-surface-variant mb-2">Alasan Laporan</label>
+                                                <div class="flex flex-wrap gap-2 mb-2">
+                                                    @foreach (\App\Models\CommentReport::REASON_LABELS as $key => $label)
+                                                        <label class="flex items-center gap-1 text-sm text-primary cursor-pointer">
+                                                            <input type="radio" name="reason" value="{{ $key }}" required class="accent-primary">
+                                                            {{ $label }}
+                                                        </label>
+                                                    @endforeach
+                                                </div>
+                                                <textarea name="description" rows="2" placeholder="Deskripsi tambahan (opsional)..."
+                                                          class="w-full shadow-neu-inset bg-background rounded-lg px-3 py-2 text-sm font-sans text-primary placeholder:text-outline focus:shadow-neu-focus focus:outline-none transition-all resize-none mb-2"></textarea>
+                                                <div class="flex justify-end gap-2">
+                                                    <button type="button" onclick="document.getElementById('report-form-{{ $comment->id }}').classList.add('hidden')"
+                                                            class="px-3 py-1 text-sm text-secondary hover:text-primary transition-colors">Batal</button>
+                                                    <button type="submit"
+                                                            class="px-3 py-1 text-sm bg-accent-orange text-white rounded-lg neu-btn">Kirim Laporan</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    @endif
+                                @endauth
                             </div>
                         </div>
                     @empty

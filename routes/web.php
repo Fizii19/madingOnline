@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\CommentReportController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PostReportController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PollController;
 use App\Http\Controllers\PollVoteController;
@@ -35,6 +37,16 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::put('/posts/{post}', [PostController::class, 'update'])->name('posts.update');
     Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
 
+    Route::post('/posts/{post}/approve', [PostController::class, 'approve'])->name('posts.approve');
+    Route::post('/posts/{post}/reject', [PostController::class, 'reject'])->name('posts.reject');
+
+    Route::get('/admin/reports', [CommentReportController::class, 'index'])->name('admin.reports');
+    Route::get('/admin/post-reports', [PostReportController::class, 'index'])->name('admin.post-reports');
+    Route::post('/admin/post-reports/{report}/approve', [PostReportController::class, 'approve'])->name('admin.post-reports.approve');
+    Route::post('/admin/post-reports/{report}/reject', [PostReportController::class, 'reject'])->name('admin.post-reports.reject');
+    Route::post('/admin/reports/{report}/approve', [CommentReportController::class, 'approve'])->name('admin.reports.approve');
+    Route::post('/admin/reports/{report}/reject', [CommentReportController::class, 'reject'])->name('admin.reports.reject');
+
     Route::get('/polls', [PollController::class, 'index'])->name('polls.index');
     Route::post('/polls', [PollController::class, 'store'])->name('polls.store');
     Route::post('/polls/{poll}/toggle', [PollController::class, 'toggleActive'])->name('polls.toggle');
@@ -47,6 +59,12 @@ Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show')
 // Interactions require a logged-in user
 Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->middleware('auth')->name('posts.comments.store');
 Route::delete('/posts/{post}/comments/{comment}', [CommentController::class, 'destroy'])->middleware('auth')->name('posts.comments.destroy');
+Route::post('/posts/{post}/comments/{comment}/report', [CommentReportController::class, 'store'])->middleware('auth')->name('posts.comments.report');
+Route::get('/mading/upload', [PostController::class, 'uploadForm'])->middleware('auth')->name('mading.upload');
+Route::post('/mading/upload', [PostController::class, 'uploadStore'])->middleware('auth')->name('mading.store');
+Route::get('/mading/saya', [PostController::class, 'myMading'])->middleware('auth')->name('mading.my');
+
+Route::post('/posts/{post}/report', [PostReportController::class, 'store'])->middleware('auth')->name('posts.report');
 Route::post('/posts/{post}/like', [LikeController::class, 'toggle'])->middleware('auth')->name('posts.like');
 
 // Poll voting requires a logged-in user

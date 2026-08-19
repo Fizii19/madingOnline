@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Poll;
 use App\Models\Post;
+use App\Models\User;
+use App\Notifications\NewMadingPendingNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -38,13 +40,9 @@ class PostController extends Controller
 
         $query->orderBy('is_pinned', 'desc')->orderByDesc('created_at');
 
-        if ($hasFilter) {
-            $paginator = $query->paginate(9)->withQueryString();
-            $posts = $paginator->getCollection();
-        } else {
-            $paginator = null;
-            $posts = $query->take(4)->get();
-        }
+        // Always paginate — show featured + rest in grid
+        $paginator = $query->paginate(9)->withQueryString();
+        $posts = $paginator->getCollection();
 
         return view('beranda', [
             'featured' => $posts->shift(),
@@ -56,6 +54,93 @@ class PostController extends Controller
             'totalResults' => $total,
             'hasFilter' => $hasFilter,
         ]);
+    }
+
+    /**
+     * User: show their own mading posts and their statuses.
+     */
+    public function myMading(Request $request): View
+    {
+        $user = $request->user();
+        $status = $request->query('status') ?: null;
+
+        $query = Post::where('user_id', $user->id);
+
+        if ($status !== null) {
+            $query->where('status', $status);
+        }
+
+        $posts = $query->latest()->paginate(6)->withQueryString();
+
+        $stats = [
+            'total' => Post::where('user_id', $user->id)->count(),
+            'pending' => Post::where('user_id', $user->id)->where('status', 'pending')->count(),
+            'published' => Post::where('user_id', $user->id)->where('status', 'published')->count(),
+            'draft' => Post::where('user_id', $user->id)->where('status', 'draft')->count(),
+        ];
+
+        return view('mading.my-mading', compact('posts', 'stats', 'status'));
+    }
+
+    /**
+     * User: show the mading upload form.
+     */
+    public function uploadForm(): View
+    {
+        return view('mading.upload');
+    }
+
+    /**
+     * User: store a new mading (auto status = pending).
+     */
+    public function uploadStore(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'category' => ['required', 'string', 'in:'.implode(',', Post::CATEGORIES)],
+            'content' => ['required', 'string'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:5120'],
+        ]);
+
+        $post = Post::create([
+            'user_id' => $request->user()->id,
+            'title' => $validated['title'],
+            'category' => $validated['category'],
+            'content' => $validated['content'],
+            'status' => 'pending',
+            'image_path' => $this->storeCoverImage($request),
+        ]);
+
+        // Notify all admins about the new pending mading
+        User::where('is_admin', true)->each(function (User $admin) use ($post) {
+            $admin->notify(new NewMadingPendingNotification($post));
+        });
+
+        return redirect()->route('home')->with('success', 'Mading berhasil dikirim! Menunggu persetujuan admin.');
+    }
+
+    /**
+     * Admin: approve a pending post.
+     */
+    public function approve(Post $post): RedirectResponse
+    {
+        abort_unless($post->status === 'pending', 404);
+
+        $post->update(['status' => 'published']);
+
+        return back()->with('success', 'Postingan berhasil disetujui dan diterbitkan.');
+    }
+
+    /**
+     * Admin: reject a pending post (set to draft).
+     */
+    public function reject(Post $post): RedirectResponse
+    {
+        abort_unless($post->status === 'pending', 404);
+
+        $post->update(['status' => 'draft']);
+
+        return back()->with('success', 'Postingan ditolak dan disimpan sebagai draf.');
     }
 
     /**

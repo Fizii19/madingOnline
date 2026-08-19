@@ -8,6 +8,9 @@
     'viewUrl' => '#',
     'editUrl' => '#',
     'deleteUrl' => null,
+    'status' => 'published',
+    'approveUrl' => null,
+    'rejectUrl' => null,
 ])
 
 <div class="shadow-neu-raised bg-background rounded-xl p-card-padding grid grid-cols-1 md:grid-cols-12 gap-gutter items-center relative overflow-hidden">
@@ -36,24 +39,43 @@
     </div>
 
     <div class="md:col-span-3 flex items-center justify-end gap-3 mt-4 md:mt-0">
-        <a href="{{ $viewUrl }}" aria-label="Lihat"
-           class="shadow-neu-raised bg-background rounded-full w-10 h-10 flex items-center justify-center text-secondary hover:text-primary neu-btn">
-            <x-icon name="visibility" class="text-[20px]" />
-        </a>
-        <a href="{{ $editUrl }}" aria-label="Edit"
-           class="shadow-neu-raised bg-background rounded-full w-10 h-10 flex items-center justify-center text-secondary hover:text-primary neu-btn">
-            <x-icon name="edit" class="text-[20px]" />
-        </a>
-        @if ($deleteUrl)
-            <form method="POST" action="{{ $deleteUrl }}"
-                  onsubmit="return confirm('Hapus postingan ini? Tindakan tidak bisa dibatalkan.');">
+        @if ($status === 'pending' && $approveUrl && $rejectUrl)
+            <form method="POST" action="{{ $approveUrl }}"
+                  onsubmit="return confirm('Setujui postingan ini?');">
                 @csrf
-                @method('DELETE')
-                <button type="submit" aria-label="Hapus"
-                        class="shadow-neu-raised bg-background rounded-full w-10 h-10 flex items-center justify-center text-error hover:text-error-container neu-btn">
-                    <x-icon name="delete" class="text-[20px]" />
+                <button type="submit" aria-label="Setujui"
+                        class="shadow-neu-raised bg-accent-green rounded-full w-10 h-10 flex items-center justify-center text-white hover:scale-110 neu-btn">
+                    <x-icon name="check" class="text-[20px]" />
                 </button>
             </form>
+            <form method="POST" action="{{ $rejectUrl }}"
+                  onsubmit="return confirm('Tolak postingan ini?');">
+                @csrf
+                <button type="submit" aria-label="Tolak"
+                        class="shadow-neu-raised bg-accent-orange rounded-full w-10 h-10 flex items-center justify-center text-white hover:scale-110 neu-btn">
+                    <x-icon name="close" class="text-[20px]" />
+                </button>
+            </form>
+        @else
+            <a href="{{ $viewUrl }}" aria-label="Lihat"
+               class="shadow-neu-raised bg-background rounded-full w-10 h-10 flex items-center justify-center text-secondary hover:text-primary neu-btn">
+                <x-icon name="visibility" class="text-[20px]" />
+            </a>
+            <a href="{{ $editUrl }}" aria-label="Edit"
+               class="shadow-neu-raised bg-background rounded-full w-10 h-10 flex items-center justify-center text-secondary hover:text-primary neu-btn">
+                <x-icon name="edit" class="text-[20px]" />
+            </a>
+            @if ($deleteUrl)
+                <form method="POST" action="{{ $deleteUrl }}"
+                      onsubmit="return confirm('Hapus postingan ini? Tindakan tidak bisa dibatalkan.');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" aria-label="Hapus"
+                            class="shadow-neu-raised bg-background rounded-full w-10 h-10 flex items-center justify-center text-error hover:text-error-container neu-btn">
+                        <x-icon name="delete" class="text-[20px]" />
+                    </button>
+                </form>
+            @endif
         @endif
     </div>
 </div>

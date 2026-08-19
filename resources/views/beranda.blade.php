@@ -9,14 +9,14 @@
             </p>
 
             {{-- Search & category filter --}}
-            <form method="GET" action="{{ route('home') }}" class="mt-gutter flex flex-col md:flex-row gap-gutter items-center md:items-end">
-                <div class="relative flex-1 w-full max-w-xl">
+            <form method="GET" action="{{ route('home') }}" class="mt-gutter flex flex-col md:flex-row gap-gutter items-end max-w-5xl mx-auto">
+                <div class="relative flex-1 w-full">
                     <x-icon name="search" class="absolute left-4 top-1/2 -translate-y-1/2 text-secondary" />
                     <input type="text" name="q" value="{{ $search }}" placeholder="Cari bulletin..."
                            class="w-full shadow-neu-inset bg-background rounded-full pl-11 pr-4 py-2.5 text-body-md font-sans text-primary placeholder:text-outline focus:shadow-neu-focus focus:outline-none transition-all">
                 </div>
 
-                <div class="relative w-full md:w-56">
+                <div class="relative w-full md:w-48">
                     <select name="category"
                             class="w-full shadow-neu-inset bg-background rounded-full px-4 py-2.5 text-body-md font-sans text-primary appearance-none focus:shadow-neu-focus focus:outline-none transition-all">
                         <option value="">Semua Kategori</option>
@@ -107,9 +107,7 @@
             @endif
         @endunless
 
-        @if ($hasFilter && $paginator)
-            <x-pagination :paginator="$paginator" />
-        @endif
+        <x-pagination :paginator="$paginator" />
     </main>
 
     <x-footer />

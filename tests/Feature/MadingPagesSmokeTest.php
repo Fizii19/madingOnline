@@ -2,8 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Models\CommentReport;
 use App\Models\Poll;
 use App\Models\Post;
+use App\Models\PostReport;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -200,7 +202,7 @@ class MadingPagesSmokeTest extends TestCase
 
     public function test_admin_pages_redirect_guests_to_login(): void
     {
-        foreach (['/dashboard', '/management', '/posts/create'] as $route) {
+        foreach (['/dashboard', '/management', '/posts/create', '/admin/reports', '/admin/post-reports'] as $route) {
             $this->get($route)->assertRedirect(route('login'));
         }
     }
@@ -212,6 +214,8 @@ class MadingPagesSmokeTest extends TestCase
         $this->actingAs($user)->get('/dashboard')->assertForbidden();
         $this->actingAs($user)->get('/management')->assertForbidden();
         $this->actingAs($user)->get('/posts/create')->assertForbidden();
+        $this->actingAs($user)->get('/admin/reports')->assertForbidden();
+        $this->actingAs($user)->get('/admin/post-reports')->assertForbidden();
     }
 
     public function test_admin_pages_render_for_admins(): void
@@ -221,6 +225,8 @@ class MadingPagesSmokeTest extends TestCase
         $this->actingAs($admin)->get('/dashboard')->assertStatus(200)->assertSee('MadingBoard');
         $this->actingAs($admin)->get('/management')->assertStatus(200);
         $this->actingAs($admin)->get('/posts/create')->assertStatus(200);
+        $this->actingAs($admin)->get('/admin/reports')->assertStatus(200);
+        $this->actingAs($admin)->get('/admin/post-reports')->assertStatus(200);
     }
 
     public function test_admin_can_create_a_post(): void
@@ -427,5 +433,255 @@ class MadingPagesSmokeTest extends TestCase
         $this->get(route('home'))
             ->assertSee('Poll aktif terbaru')
             ->assertDontSee('Poll nonaktif');
+    }
+
+    // --- Feature: Comment Reports ---
+
+    public function test_user_can_report_a_comment(): void
+    {
+        $user = User::factory()->create();
+        $owner = User::factory()->create();
+        $post = Post::factory()->create();
+        $comment = $post->comments()->create(['user_id' => $owner->id, 'body' => 'Komentar buruk']);
+
+        $this->actingAs($user)
+            ->post(route('posts.comments.report', [$post, $comment]), [
+                'reason' => 'spam',
+                'description' => 'Ini spam',
+            ])
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('comment_reports', [
+            'comment_id' => $comment->id,
+            'user_id' => $user->id,
+            'reason' => 'spam',
+        ]);
+    }
+
+    public function test_user_cannot_report_own_comment(): void
+    {
+        $user = User::factory()->create();
+        $post = Post::factory()->create();
+        $comment = $post->comments()->create(['user_id' => $user->id, 'body' => 'Komentar sendiri']);
+
+        $this->actingAs($user)
+            ->post(route('posts.comments.report', [$post, $comment]), [
+                'reason' => 'spam',
+            ])
+            ->assertRedirect();
+
+        $this->assertDatabaseMissing('comment_reports', [
+            'comment_id' => $comment->id,
+        ]);
+    }
+
+    public function test_admin_can_approve_report_and_delete_comment(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $owner = User::factory()->create();
+        $post = Post::factory()->create();
+        $comment = $post->comments()->create(['user_id' => $owner->id, 'body' => 'Komentar ofensif']);
+        $report = CommentReport::create([
+            'comment_id' => $comment->id,
+            'user_id' => $admin->id,
+            'reason' => 'ofensir',
+        ]);
+
+        $this->actingAs($admin)
+            ->post(route('admin.reports.approve', $report))
+            ->assertRedirect();
+
+        $this->assertDatabaseMissing('comments', ['id' => $comment->id]);
+        $this->assertDatabaseHas('comment_reports', ['id' => $report->id, 'status' => 'approved']);
+    }
+
+    public function test_admin_can_reject_report(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $owner = User::factory()->create();
+        $post = Post::factory()->create();
+        $comment = $post->comments()->create(['user_id' => $owner->id, 'body' => 'Komentar oke']);
+        $report = CommentReport::create([
+            'comment_id' => $comment->id,
+            'user_id' => $admin->id,
+            'reason' => 'lainnya',
+        ]);
+
+        $this->actingAs($admin)
+            ->post(route('admin.reports.reject', $report))
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('comments', ['id' => $comment->id]);
+        $this->assertDatabaseHas('comment_reports', ['id' => $report->id, 'status' => 'rejected']);
+    }
+
+    // --- Feature: User Mading Upload ---
+
+    public function test_user_can_upload_mading(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->post(route('mading.store'), [
+                'title' => 'Mading dari User',
+                'category' => 'event',
+                'content' => 'Isi mading yang dikirim user.',
+            ])
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('posts', [
+            'title' => 'Mading dari User',
+            'user_id' => $user->id,
+            'status' => 'pending',
+        ]);
+    }
+
+    public function test_admin_can_approve_pending_post(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $user = User::factory()->create();
+        $post = Post::factory()->create(['status' => 'pending', 'user_id' => $user->id]);
+
+        $this->actingAs($admin)
+            ->post(route('posts.approve', $post))
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('posts', ['id' => $post->id, 'status' => 'published']);
+    }
+
+    public function test_admin_can_reject_pending_post(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $user = User::factory()->create();
+        $post = Post::factory()->create(['status' => 'pending', 'user_id' => $user->id]);
+
+        $this->actingAs($admin)
+            ->post(route('posts.reject', $post))
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('posts', ['id' => $post->id, 'status' => 'draft']);
+    }
+
+    public function test_mading_upload_page_requires_auth(): void
+    {
+        $this->get(route('mading.upload'))->assertRedirect(route('login'));
+    }
+
+    // --- Feature: Post Reports ---
+
+    public function test_user_can_report_a_post(): void
+    {
+        $user = User::factory()->create();
+        $author = User::factory()->create();
+        $post = Post::factory()->create(['user_id' => $author->id]);
+
+        $this->actingAs($user)
+            ->post(route('posts.report', $post), [
+                'reason' => 'spam',
+                'description' => 'Postingan spam',
+            ])
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('post_reports', [
+            'post_id' => $post->id,
+            'user_id' => $user->id,
+            'reason' => 'spam',
+        ]);
+    }
+
+    public function test_user_cannot_report_own_post(): void
+    {
+        $user = User::factory()->create();
+        $post = Post::factory()->create(['user_id' => $user->id]);
+
+        $this->actingAs($user)
+            ->post(route('posts.report', $post), [
+                'reason' => 'spam',
+            ])
+            ->assertRedirect();
+
+        $this->assertDatabaseMissing('post_reports', [
+            'post_id' => $post->id,
+        ]);
+    }
+
+    public function test_user_cannot_report_same_post_twice(): void
+    {
+        $user = User::factory()->create();
+        $author = User::factory()->create();
+        $post = Post::factory()->create(['user_id' => $author->id]);
+
+        $this->actingAs($user)
+            ->post(route('posts.report', $post), ['reason' => 'spam'])
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('post_reports', ['post_id' => $post->id, 'user_id' => $user->id]);
+
+        // Second report should fail
+        $this->actingAs($user)
+            ->post(route('posts.report', $post), ['reason' => 'ofensir'])
+            ->assertSessionHas('error');
+
+        $this->assertSame(1, PostReport::where('post_id', $post->id)->count());
+    }
+
+    public function test_guest_cannot_report_a_post(): void
+    {
+        $post = Post::factory()->create();
+
+        $this->post(route('posts.report', $post), ['reason' => 'spam'])
+            ->assertRedirect(route('login'));
+    }
+
+    public function test_admin_can_approve_post_report_and_delete_post(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $author = User::factory()->create();
+        $post = Post::factory()->create(['user_id' => $author->id]);
+        $report = PostReport::create([
+            'post_id' => $post->id,
+            'user_id' => $admin->id,
+            'reason' => 'ofensir',
+        ]);
+
+        $this->actingAs($admin)
+            ->post(route('admin.post-reports.approve', $report))
+            ->assertRedirect();
+
+        $this->assertDatabaseMissing('posts', ['id' => $post->id]);
+        $this->assertDatabaseHas('post_reports', ['id' => $report->id, 'status' => 'approved']);
+    }
+
+    public function test_admin_can_reject_post_report(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $author = User::factory()->create();
+        $post = Post::factory()->create(['user_id' => $author->id]);
+        $report = PostReport::create([
+            'post_id' => $post->id,
+            'user_id' => $admin->id,
+            'reason' => 'lainnya',
+        ]);
+
+        $this->actingAs($admin)
+            ->post(route('admin.post-reports.reject', $report))
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('posts', ['id' => $post->id]);
+        $this->assertDatabaseHas('post_reports', ['id' => $report->id, 'status' => 'rejected']);
+    }
+
+    public function test_regular_user_cannot_access_post_reports_admin(): void
+    {
+        $user = User::factory()->create(['is_admin' => false]);
+
+        $this->actingAs($user)->get(route('admin.post-reports'))->assertForbidden();
+    }
+
+    public function test_admin_post_reports_page_renders(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+
+        $this->actingAs($admin)->get(route('admin.post-reports'))->assertStatus(200)->assertSee('Laporan Postingan');
     }
 }

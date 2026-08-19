@@ -11,7 +11,14 @@
     if (auth()->check() && auth()->user()->is_admin) {
         $links['dashboard'] = ['label' => 'Dasbor', 'url' => route('dashboard')];
         $links['management'] = ['label' => 'Manajemen', 'url' => route('management')];
+        $links['reports'] = ['label' => 'Laporan Komentar', 'url' => route('admin.reports')];
+        $links['post-reports'] = ['label' => 'Laporan Postingan', 'url' => route('admin.post-reports')];
         $links['polls'] = ['label' => 'Polling', 'url' => route('polls.index')];
+    }
+
+    if (auth()->check() && !auth()->user()->is_admin) {
+        $links['mading_my'] = ['label' => 'Mading Saya', 'url' => route('mading.my')];
+        $links['mading_upload'] = ['label' => 'Upload Mading', 'url' => route('mading.upload')];
     }
 @endphp
 
